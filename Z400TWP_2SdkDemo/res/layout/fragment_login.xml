@@ -1,0 +1,111 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/page_bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_margin"
+    android:paddingRight="@dimen/activity_margin" >
+
+    <EditText
+        android:id="@+id/et_server_address"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/et_bg"
+        android:hint="@string/hint_server_address"
+        android:lines="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/COLOR_3"
+        android:textSize="@dimen/Title_3" />
+
+    <EditText
+        android:id="@+id/et_token"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/et_bg"
+        android:hint="@string/hint_token"
+        android:lines="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/COLOR_3"
+        android:textSize="@dimen/Title_3" />
+
+    <EditText
+        android:id="@+id/et_channel_id"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/et_bg"
+        android:hint="@string/hint_channel_id"
+        android:lines="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/COLOR_3"
+        android:textSize="@dimen/Title_3" />
+
+    <Button
+        android:id="@+id/btn_connect"
+        style="@style/common_bt"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/connect_server" />
+
+    <EditText
+        android:id="@+id/et_device_id"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/et_bg"
+        android:hint="@string/hint_device_id"
+        android:lines="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/COLOR_3"
+        android:textSize="@dimen/Title_3" />
+
+    <EditText
+        android:id="@+id/et_device_version"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/et_bg"
+        android:hint="@string/hint_device_version"
+        android:lines="1"
+        android:inputType="numberDecimal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/COLOR_3"
+        android:textSize="@dimen/Title_3" />
+
+    <Button
+        android:id="@+id/btn_upgrade_device"
+        style="@style/common_bt"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/fireware_update" />
+    <Button
+        android:id="@+id/btn_bind_device"
+        style="@style/common_bt"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/bind_device" />
+    <Button
+        android:id="@+id/btn_unbind_device"
+        style="@style/common_bt"
+        android:layout_height="@dimen/btn_height"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/unbind_device" />
+
+</LinearLayout>

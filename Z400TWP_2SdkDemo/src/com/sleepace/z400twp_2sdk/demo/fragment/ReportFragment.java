@@ -1,5 +1,6 @@
 package com.sleepace.z400twp_2sdk.demo.fragment;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,18 +8,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sleepace.sdk.interfs.IResultCallback;
 import com.sleepace.sdk.manager.CallbackData;
 import com.sleepace.sdk.manager.DeviceType;
 import com.sleepace.sdk.util.SdkLog;
 import com.sleepace.sdk.util.TimeUtil;
 import com.sleepace.sdk.wifidevice.WiFiDeviceSdkHelper;
-import com.sleepace.sdk.wifidevice.bean.Analysis;
-import com.sleepace.sdk.wifidevice.bean.Detail;
-import com.sleepace.sdk.wifidevice.bean.HistoryData;
-import com.sleepace.sdk.wifidevice.bean.Summary;
+import com.sleepace.sdk.wifidevice.bean.ResponseData;
 import com.sleepace.sdk.z400twp_2.constants.SleepConfig;
 import com.sleepace.sdk.z400twp_2.constants.SleepStatusType;
+import com.sleepace.sdk.z400twp_2.domain.Analysis;
+import com.sleepace.sdk.z400twp_2.domain.Detail;
+import com.sleepace.sdk.z400twp_2.domain.HistoryData;
+import com.sleepace.sdk.z400twp_2.domain.HistoryDataList;
+import com.sleepace.sdk.z400twp_2.domain.Summary;
 import com.sleepace.z400twp_2sdk.demo.R;
 import com.sleepace.z400twp_2sdk.demo.bean.CvPoint;
 import com.sleepace.z400twp_2sdk.demo.util.DensityUtil;
@@ -129,7 +134,15 @@ public class ReportFragment extends BaseFragment {
 							progressDialog.dismiss();
 							reportLayout.removeAllViews();
 							if(cd.isSuccess()) {
-								List<HistoryData> list = (List<HistoryData>) cd.getResult();
+								Gson gson = new Gson();
+								Object obj = cd.getResult();
+								String str = gson.toJson(obj);
+								HistoryDataList dataList = gson.fromJson(str, HistoryDataList.class);
+								SdkLog.log(TAG+" getSleepReport dataList:" + dataList);
+								List<HistoryData> list = null;
+								if(dataList != null) {
+									list = dataList.getHistory();
+								}
 								if(list != null && list.size() > 0) {
 									HistoryData historyData = list.get(0);
 									Analysis analysis = historyData.getAnalysis();

@@ -1,12 +1,14 @@
 package com.sleepace.z400twp_2sdk.demo.fragment;
 
 import java.util.HashMap;
+import java.util.List;
 
 import com.sleepace.sdk.interfs.IResultCallback;
 import com.sleepace.sdk.manager.CallbackData;
 import com.sleepace.sdk.manager.DeviceType;
 import com.sleepace.sdk.util.SdkLog;
 import com.sleepace.sdk.wifidevice.WiFiDeviceSdkHelper;
+import com.sleepace.sdk.wifidevice.bean.DeviceInfo;
 import com.sleepace.sdk.wifidevice.bean.IdentificationBean;
 import com.sleepace.sdk.z400twp_2.Z400TWP2Helper;
 import com.sleepace.z400twp_2sdk.demo.MainActivity;
@@ -34,6 +36,8 @@ public class LoginFragment extends BaseFragment {
 	private ProgressDialog progressDialog;
 	private ProgressDialog upgradeDialog;
 	private SharedPreferences mSetting;
+	private String ip, sid;
+	private int port;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,13 +98,13 @@ public class LoginFragment extends BaseFragment {
 		super.onResume();
 		String serverHost = mSetting.getString("serverHost", "http://120.24.68.136:8091");
 		etServerAddress.setText(serverHost);
-		String token = mSetting.getString("token", "lisufang");
+		String token = mSetting.getString("token", "");
 		etToken.setText(token);
-		String channelId = mSetting.getString("channelId", "13700");
+		String channelId = mSetting.getString("channelId", "");
 		etChannelId.setText(channelId);
 		String deviceId = mSetting.getString("deviceId", MainActivity.deviceId);
 		etDeviceId.setText(deviceId);
-		String version = mSetting.getString("version", "2.53");
+		String version = mSetting.getString("version", "");
 		etVersion.setText(version);
 	}
 
@@ -156,29 +160,48 @@ public class LoginFragment extends BaseFragment {
 					// TODO Auto-generated method stub
 					SdkLog.log(TAG + " authorize cd:" + cd);
 					if (cd.isSuccess()) {
-						final String deviceId = etDeviceId.getText().toString().trim();
-						IdentificationBean bean = (IdentificationBean) cd.getResult();
-						z400twpHelper.login(bean.getIp(), bean.getPort(), bean.getSid(), deviceId, new IResultCallback() {
-							@Override
-							public void onResultCallback(final CallbackData cd) {
-								// TODO Auto-generated method stub
-								// SdkLog.log(TAG+" login cd:" + cd);
-								if (ActivityUtil.isActivityAlive(mActivity)) {
-									mActivity.runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											// TODO Auto-generated method stub
-											progressDialog.dismiss();
-											if (cd.isSuccess()) {
-												Toast.makeText(mActivity, R.string.connect_server_success, Toast.LENGTH_SHORT).show();
-											} else {
-												Toast.makeText(mActivity, R.string.failure, Toast.LENGTH_SHORT).show();
-											}
-										}
-									});
+						if (ActivityUtil.isActivityAlive(mActivity)) {
+							mActivity.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+									if (cd.isSuccess()) {
+										Toast.makeText(mActivity, R.string.connect_server_success, Toast.LENGTH_SHORT).show();
+										IdentificationBean bean = (IdentificationBean) cd.getResult();
+										ip = bean.getIp();
+										port = bean.getPort();
+										sid = bean.getSid();
+										getBindedDevice();
+									} else {
+										progressDialog.dismiss();
+										Toast.makeText(mActivity, R.string.failure, Toast.LENGTH_SHORT).show();
+									}
 								}
-							}
-						});
+							});
+						}
+//						final String deviceId = etDeviceId.getText().toString().trim();
+//						IdentificationBean bean = (IdentificationBean) cd.getResult();
+//						z400twpHelper.login(bean.getIp(), bean.getPort(), bean.getSid(), deviceId, new IResultCallback() {
+//							@Override
+//							public void onResultCallback(final CallbackData cd) {
+//								// TODO Auto-generated method stub
+//								// SdkLog.log(TAG+" login cd:" + cd);
+//								if (ActivityUtil.isActivityAlive(mActivity)) {
+//									mActivity.runOnUiThread(new Runnable() {
+//										@Override
+//										public void run() {
+//											// TODO Auto-generated method stub
+//											progressDialog.dismiss();
+//											if (cd.isSuccess()) {
+//												Toast.makeText(mActivity, R.string.connect_server_success, Toast.LENGTH_SHORT).show();
+//											} else {
+//												Toast.makeText(mActivity, R.string.failure, Toast.LENGTH_SHORT).show();
+//											}
+//										}
+//									});
+//								}
+//							}
+//						});
 					} else {
 						if (ActivityUtil.isActivityAlive(mActivity)) {
 							mActivity.runOnUiThread(new Runnable() {
@@ -229,7 +252,7 @@ public class LoginFragment extends BaseFragment {
 			});
 		} else if (v == btnBindDevice) {
 			progressDialog.show();
-			String deviceId = etDeviceId.getText().toString().trim();
+			final String deviceId = etDeviceId.getText().toString().trim();
 			HashMap<String, Object> args = new HashMap<String, Object>();
 			args.put("deviceId", deviceId);
 			args.put("leftRight", 0);
@@ -246,6 +269,8 @@ public class LoginFragment extends BaseFragment {
 								progressDialog.dismiss();
 								if (cd.isSuccess()) {
 									Toast.makeText(mActivity, R.string.bind_device_success, Toast.LENGTH_SHORT).show();
+									MainActivity.deviceId = deviceId;
+									z400twpHelper.login(ip, port, sid, deviceId, loginCallback);
 								} else {
 									Toast.makeText(mActivity, R.string.failure, Toast.LENGTH_SHORT).show();
 								}
@@ -283,5 +308,54 @@ public class LoginFragment extends BaseFragment {
 			});
 		}
 	}
+	
+	private void getBindedDevice() {
+		wifiDeviceSdkHelper.getBindedDevice(new IResultCallback() {
+			@Override
+			public void onResultCallback(final CallbackData cd) {
+				// TODO Auto-generated method stub
+				SdkLog.log(TAG + " getBindedDevice cd:" + cd);
+				if (ActivityUtil.isActivityAlive(mActivity)) {
+					mActivity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							progressDialog.dismiss();
+							if(cd.isSuccess()) {
+								List<DeviceInfo> list = (List<DeviceInfo>) cd.getResult();
+								int size = list == null ? 0 : list.size();
+								for(int i=0; i<size; i++) {
+									DeviceInfo device = list.get(i);
+									String deviceId = device.getDeviceId();
+									String deviceName = device.getDeviceName();
+									short deviceType = (short) device.getDeviceType();
+									float deviceVersion = device.getDeviceVersion();
+									String ext = device.getExt();
+									DeviceType dType = DeviceType.getDeviceType(deviceType);
+									if(DeviceType.isZ4TWP(dType) || DeviceType.isZ400TWP2(dType)) {
+										MainActivity.deviceId = deviceId;
+										etDeviceId.setText(deviceId);
+										etVersion.setText(String.valueOf(deviceVersion));
+										z400twpHelper.login(ip, port, sid, deviceId, loginCallback);
+										break;
+									}else {
+										
+									}
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	
+	private IResultCallback loginCallback = new IResultCallback() {
+		@Override
+		public void onResultCallback(final CallbackData cd) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
 
 }

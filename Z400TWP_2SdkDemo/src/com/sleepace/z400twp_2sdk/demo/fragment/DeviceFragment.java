@@ -313,14 +313,18 @@ public class DeviceFragment extends BaseFragment {
 								// TODO Auto-generated method stub
 								if(cd.isSuccess()) {
 									SleepState sleepState = cd.getResult();
-									if(sleepState.getWakeupFlag() == 1) {
-										tvCurSleepState.setText(R.string.wake);
-									}else if(sleepState.getAsleepFlag() == 1) {
-										tvCurSleepState.setText(R.string.asleep);
-									}else if(sleepState.getOutOfBedFlag() == 0) {
-										tvCurSleepState.setText(R.string.in_bed);
-									}else if(sleepState.getOutOfBedFlag() == 1) {
-										tvCurSleepState.setText(R.string.out_bed);
+									if(sleepState != null) {
+										if(sleepState.getWakeupFlag() == 1) {
+											tvCurSleepState.setText(R.string.wake);
+										}else if(sleepState.getAsleepFlag() == 1) {
+											tvCurSleepState.setText(R.string.asleep);
+										}else if(sleepState.getOutOfBedFlag() == 0) {
+											tvCurSleepState.setText(R.string.in_bed);
+										}else if(sleepState.getOutOfBedFlag() == 1) {
+											tvCurSleepState.setText(R.string.out_bed);
+										}else {
+											tvCurSleepState.setText("--");
+										}
 									}else {
 										tvCurSleepState.setText("--");
 									}

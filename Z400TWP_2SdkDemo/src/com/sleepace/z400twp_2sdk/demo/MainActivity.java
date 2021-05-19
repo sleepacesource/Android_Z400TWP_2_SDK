@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity {
 	public static byte collectStatus = -100;
 	public static final int userId = 33131;
 //	public static final String deviceId = "y24mlthq3fxga";
-	public static final String deviceId = "81d3xeoievs6h";
+	public static String deviceId = "";
 	
 	private final int requestCode = 101;//权限请求码
     private boolean hasPermissionDismiss = false;//有权限没有通过
